@@ -157,8 +157,6 @@ void PrintCounter::loadStats() {
     #endif
     #if HAS_BUZZER && SERVICE_WARNING_BUZZES > 0
       if (doBuzz) for (int i = 0; i < SERVICE_WARNING_BUZZES; i++) BUZZ(200, 404);
-    #else
-      UNUSED(doBuzz);
     #endif
   #endif // HAS_SERVICE_INTERVALS
 }
@@ -183,9 +181,11 @@ void PrintCounter::saveStats() {
 
 #if HAS_SERVICE_INTERVALS
   inline void _service_when(char buffer[], const char * const msg, const uint32_t when) {
+    duration_t elapsed = when;
+    elapsed.toString(buffer);
     SERIAL_ECHOPGM(MSG_STATS);
     serialprintPGM(msg);
-    SERIAL_ECHOLNPAIR(" in ", duration_t(when).toString(buffer));
+    SERIAL_ECHOLNPAIR(" in ", buffer);
   }
 #endif
 
