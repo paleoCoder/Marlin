@@ -202,6 +202,16 @@ G29_TYPE GcodeSuite::G29() {
   // Don't allow auto-leveling without homing first
   if (axis_unhomed_error()) G29_RETURN(false);
 
+  #if ENABLED(BLTOUCH)
+    if(!probe.is_exist()) {  // probe not exist
+      #if HAS_DISPLAY        // It's means that the Bltouch is not ready
+        ui.status_printf_P(0, PSTR("Bltouch not ready!"));
+      #endif
+      SERIAL_ECHO_MSG("(Optional) Please check whether your printer has Bltouch");
+      G29_RETURN(false);
+    }
+  #endif
+
   if (!no_action && planner.leveling_active && parser.boolval('O')) { // Auto-level only if needed
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("> Auto-level not needed, skip\n<<< G29");
     G29_RETURN(false);

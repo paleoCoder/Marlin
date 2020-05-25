@@ -1504,6 +1504,14 @@ void set_axis_not_trusted(const AxisEnum axis) {
  */
 
 void homeaxis(const AxisEnum axis) {
+  // for BIQU B1 
+  if (axis == X_AXIS && thermalManager.degHotend(0) < 0) { // The hotend temp is negative when hotend type-c line not inserted
+    #if HAS_DISPLAY                                        // It's means that the X-Axis endstop is not ready
+      ui.status_printf_P(0, PSTR("X Endstop not ready!"));
+    #endif
+    SERIAL_ECHO_MSG("Please check whether the type-C line of the hotend is inserted");
+    return;
+  }
 
   #if IS_SCARA
     // Only Z homing (with probe) is permitted
